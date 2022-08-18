@@ -1,0 +1,21 @@
+const express = require("express");
+const path = require("path");
+const app = express();
+const userRoute = require("./../routes/userRoute");
+const errorController = require("./../controller/errorController");
+const cookies = require("cookie-parser");
+const paymeRouter = require("./../routes/paymentRoute");
+const viewRouter = require("./../routes/viewRoute");
+app.use(cookies());
+app.use(express.json());
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "../views"));
+app.use("/api/v1/users", userRoute);
+app.use("/api/v1/payme", paymeRouter);
+app.use("/", viewRouter);
+app.use(express.urlencoded);
+app.all("*", function (req, res, next) {
+  next(new AppError(`this url has not found: ${req.originalUrl}`, 404));
+});
+app.use(errorController);
+module.exports = app;
